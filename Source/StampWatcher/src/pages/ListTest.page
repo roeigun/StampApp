@@ -1,0 +1,16 @@
+<apex:page controller="ListTestCon" showHeader="true" sidebar="false">
+<apex:form id="form1">
+<!-- display:none -->
+  ------------------------
+  <br/>
+  <apex:inputField value="{!li.companyDiv__c}" style="visibility:hidden"/>
+  <br/>
+  <apex:inputField value="{!li.subDiv__c}"/>
+  <br/>
+  ------------------------
+  <br/>
+  <apex:commandButton value="Save" action="{!doSave}" reRender="form1"/><br/>
+  <apex:commandButton value="Delete" action="{!doDelete}" reRender="form1"/><br/>
+  <apex:commandButton value="Change" action="{!doChange}"/>
+</apex:form>
+</apex:page>

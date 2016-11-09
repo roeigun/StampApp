@@ -1,0 +1,18 @@
+{
+    "projectName": "StampWatcher",
+    "username": "admin@colorsoft.com",
+    "id": "d7bbc450-a227-11e6-bd7a-1bffaedec03b",
+    "namespace": "",
+    "orgType": "developer",
+    "loginUrl": "https://login.salesforce.com/",
+    "instanceUrl": "https://ap2.salesforce.com",
+    "workspace": "D:\\MyWork\\WorkSpace",
+    "subscription": [
+        "ApexClass",
+        "ApexComponent",
+        "ApexPage",
+        "ApexTrigger",
+        "CustomObject",
+        "StaticResource"
+    ]
+}

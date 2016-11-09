@@ -1,0 +1,191 @@
+<apex:page showHeader="true" sidebar="true" standardController="BuyInfo__c" extensions="BuyInfoController">
+
+<!-- メッセージ出力 -->
+<apex:pageMessages escape="false" id="message" />
+
+<apex:stylesheet value="/resources/htdocs/css/basic.css"/>
+
+<!-- include jQuery -->
+<!-- include BlockUI -->
+<apex:includeScript value="{!$Resource.jQuery}"/>
+<apex:includeScript value="{!$Resource.blockUI}"/>
+<apex:includeScript value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" />
+     
+<script>
+	/*// invoke blockUI as needed -->
+	$(document).ready(function() { 
+	    $('#saveButton').click(function() { 
+	        $.blockUI({ css: { 
+	            border: 'none', 
+	            padding: '15px', 
+	            backgroundColor: '#000', 
+	            '-webkit-border-radius': '10px', 
+	            '-moz-border-radius': '10px', 
+	            opacity: .5, 
+	            color: '#fff' 
+	        } }); 
+	 
+	        setTimeout($.unblockUI, 2000); 
+	    }); 
+	}); */
+
+    function blockUi() {
+       
+           $.blockUI({message: '<img src="/img/loading32.gif" /><h1> Loading...</h1>',
+               css: {
+                   border: 'none',
+                   padding: '15px',
+                   backgroundColor: '#FFF',
+                   '-webkit-border-radius': '10px',
+                   'border-radius': '10px',
+                   opacity: 1,
+                   color: '#000'
+               }
+           });
+
+    }
+    
+    function unblockUi() {
+        $.unblockUI();
+    }
+   
+</script>
+
+
+
+ <!-- スタイルシート -->
+  <style type="text/css">
+  	
+	div.growlUI { 
+	  background: url({!URLFOR($Resource.IMG,'check48.png')})
+	  no-repeat 10px 10px ;
+
+	}
+
+	div.growlUI h1, div.growlUI h2 {
+	  color: lightgrey; 
+	  padding: 5px 5px 5px 75px; 
+	  text-align: left
+	}
+
+
+  </style>
+
+
+
+<apex:form>
+	<apex:actionFunction name="doCheckAll" action="{!doCheckAll}" rerender="pbDetail"/>
+
+<!-- 	<input id="pageDemo1" class="demo" type="button" value="Default Message" onclick="blockUi();" />
+ -->
+	<apex:sectionHeader title="{!$ObjectType.BuyInfo__c.Label}" subtitle="{!BuyInfo__c.Name}" />
+
+	<apex:pageBlock >
+	  <apex:pageBlockButtons location="top">
+
+			<apex:commandButton id="xxxxsaveButton" value="Save" action="{!doSave}" reRender="pbHead,message" oncomplete="unblockUi();"  onclick="if (!confirm('保存します。\nよろしいですか？')) {return false;} else {blockUi(); }"  />
+		</apex:pageBlockButtons>
+    </apex:pageBlock>
+
+	<apex:pageBlock title="ヘッダー" id="pbHead">
+		
+		<apex:pageBlockSection title="詳細情報" columns="2" id="pbs1">
+			<apex:outputPanel rendered="false">
+				**********Debug Infomation**********<br/>
+				{!view}<br/>
+				********************<br/>
+				{!BuyInfo__c.Name}
+			</apex:outputPanel>
+
+			<!-- 購入場所 -->
+			<apex:pageBlockSectionItem>
+                    <apex:outputLabel value="{!$ObjectType.BuyInfo__c.Fields.buyFrom__c.Label}" for="buyFrom"/>
+                    <apex:inputField value="{!BuyInfo__c.buyFrom__c}" id="buyFrom"/> 
+			</apex:pageBlockSectionItem>
+			<!-- 発送方法 -->
+			<apex:pageBlockSectionItem>
+                    <apex:outputLabel value="{!$ObjectType.BuyInfo__c.Fields.sentMethod__c.Label}" for="sentMethod"/>
+                    <apex:inputField value="{!BuyInfo__c.sentMethod__c}" id="sentMethod"/> 
+			</apex:pageBlockSectionItem>
+
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+
+	<apex:pageBlock  title="明細" id="pbDetail" mode="inlineEdit">
+
+			<apex:pageBlockButtons location="top">
+				<apex:commandButton id="addButton" value="add" action="{!doAdd}" onclick="blockUi();" oncomplete="unblockUi();" reRender="pbDetail,message"    />
+				<apex:commandButton id="delButton" value="del" action="{!doDelete}" onclick="blockUi();" oncomplete="unblockUi();" reRender="pbDetail,message"    />
+			</apex:pageBlockButtons>
+
+	        <apex:pageBlockTable value="{!view.buyInfoList}" var="item" columnsWidth="5%,20%,20%,20%">
+	        	<apex:column>
+	        		<apex:facet name="header">
+				        <apex:inputCheckbox  value="{!view.isCheckedAll}" onclick="doCheckAll();"/>
+			    	</apex:facet>
+			    	<apex:inputCheckbox value="{!item.isChecked}"/>
+	            </apex:column>
+
+	            <apex:column>
+	            	<apex:facet name="header">
+				        <apex:commandLink action="{!sortByName }"
+				            reRender="pbDetail">明細名
+				        </apex:commandLink>
+			    	</apex:facet>
+			    	<apex:inputField  value="{!item.buyInfoDetail.name}"/>
+	            </apex:column>
+	            <apex:column >
+	            	<apex:facet name="header">
+				        <apex:commandLink action="{!sortByMaster}"
+				            reRender="pbDetail">参照情報
+				        </apex:commandLink>
+			    	</apex:facet>
+			    	<apex:inputField  value="{!item.buyInfoDetail.stampMasterRef__c}"/>
+	            </apex:column>
+	            <apex:column >
+	            	<apex:facet name="header">
+				        <apex:commandLink action="{!sortByPrice }"
+				            reRender="pbDetail">価格
+				        </apex:commandLink>
+			    	</apex:facet>
+			    	<apex:inputField  value="{!item.buyInfoDetail.price__c}"/>
+	            </apex:column>
+	            <apex:column >
+	            	<apex:facet name="header">
+				        <apex:commandLink action="{!sortByLevel}"
+				            reRender="pbDetail">品相
+				        </apex:commandLink>
+			    	</apex:facet>
+			    	<apex:inputField  value="{!item.buyInfoDetail.level__c}"/>
+	            </apex:column>
+
+	        </apex:pageBlockTable>
+
+	        <br/>
+	        <!-- ページネーション -->
+            <apex:commandLink value="<< 最初" rendered="{!!view.isFirst}" action="{!doFirst}" />
+            <apex:outputLabel value="<< 最初" rendered="{!view.isFirst}" />
+            <apex:outputLabel value=" | " />
+
+            <apex:commandLink value="< 前" rendered="{!view.hasPrevious}" action="{!doPrevious}" />
+            <apex:outputLabel value="< 前" rendered="{!!view.hasPrevious}" />
+            <apex:outputLabel value=" | " />
+
+            <apex:repeat value="{!view.pageNumberLinks}" var="links">
+                <apex:commandLink value="{!links}" rendered="{!links != view.pageNumber}" action="{!doPageNumber}" >
+                    <apex:param value="{!links}" name="clickPageNumber" assignTo="{!view.clickPageNumber}" />
+                </apex:commandLink>
+                <apex:outputLabel value="{!links}" rendered="{!links == view.pageNumber}" />
+                <apex:outputLabel value=" | " />
+            </apex:repeat>
+
+            <apex:commandLink value="次 >" rendered="{!view.hasNext}" action="{!doNext}" />
+            <apex:outputLabel value="次 >" rendered="{!!view.hasNext}" />
+            <apex:outputLabel value=" | " />
+
+            <apex:commandLink value="最後 >>" rendered="{!!view.isLast}" action="{!doLast}" />
+            <apex:outputLabel value="最後 >>" rendered="{!view.isLast}" />
+
+	</apex:pageBlock>
+</apex:form>
+</apex:page>

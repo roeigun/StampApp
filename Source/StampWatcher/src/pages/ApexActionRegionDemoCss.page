@@ -1,0 +1,10 @@
+<apex:page >
+    <style type="text/css">
+        #vf-page .blockTableMargin {
+            margin-top: 15px;
+        }
+        #vf-page .deleteCol {
+            width: 50px;
+        }
+    </style>
+</apex:page>

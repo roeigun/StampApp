@@ -1,0 +1,58 @@
+<apex:page controller="ApexActionRegionDemoController" showHeader="true" sidebar="false" tabStyle="Account">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script type="text/javascript">
+    
+
+    function getRemoteAccount() {
+        //var accountName = document.getElementById('acctSearch').value;
+        var accountName = $("[id$=acctSearch]").val();
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.ApexActionRegionDemoController.getAccount}',
+            accountName, 
+            function(result, event){
+                if (event.status) {
+                    $("[id$=remoteAcctId]").val(result.Id);
+                } else if (event.type === 'exception') {
+                    //document.getElementById("responseErrors").innerHTML = 
+                    //    event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    //document.getElementById("responseErrors").innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }
+
+    </script>
+    <apex:include pageName="ApexActionRegionDemoCss" />
+    <apex:sectionHeader title="Force.com" subTitle="Apex Action Region Demo" />
+    <div id="vf-page">
+        <apex:form id="form">
+           
+            <apex:pageBlock title="Apex Demo1" mode="edit">
+
+             <apex:actionRegion >
+                <input id="acctSearch" type="text"/>
+                <apex:commandButton onclick="getRemoteAccount()" value="get value" reRender="blockSection"></apex:commandButton>
+                <div id="responseErrors"></div>
+
+                    <apex:pageBlockSection id="blockSection" columns="2">
+                        <apex:pageBlockSectionItem id="firstItem">
+                        <input id="remoteAcctId" type="text"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem id="secondItem">
+                            xxxxx<apex:outputText id="acctNumEmployees"/>
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+
+                </apex:actionRegion>
+
+            </apex:pageBlock>
+            
+
+           
+        </apex:form>
+    </div>
+</apex:page>
