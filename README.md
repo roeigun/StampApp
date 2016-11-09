@@ -1,0 +1,2 @@
+# StampApp
+MyTestProject
